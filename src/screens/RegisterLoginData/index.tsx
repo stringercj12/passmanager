@@ -15,7 +15,7 @@ import {
   HeaderTitle,
   Form
 } from './styles';
-import { useNavigation } from '@react-navigation/core';
+import { useStorageData } from '../../hooks/useStorageData';
 
 interface FormData {
   title: string;
@@ -41,7 +41,7 @@ export function RegisterLoginData() {
     resolver: yupResolver(schema)
   });
 
-  const dataKey = '@passmanager:logins';
+  const { setStorage, getStorage } = useStorageData();
 
   async function handleRegister(formData: FormData) {
 
@@ -61,14 +61,18 @@ export function RegisterLoginData() {
     }
 
     try {
-      const data = await AsyncStorage.getItem(dataKey);
-      const currentData = data ? JSON.parse(data) : [];
+      const currentData: any = await getStorage('logins');
+
+      console.log(currentData);
+
 
       const dataFormatted = [
         ...currentData,
         newLoginData
       ];
-      await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted));
+
+      setStorage('logins', dataFormatted);
+      // await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted));
 
       reset();
 

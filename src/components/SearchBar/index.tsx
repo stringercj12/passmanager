@@ -15,7 +15,7 @@ export function SearchBar(props: TextInputProps) {
     <Container>
       <Input
         {...props}
-        placeholderTextColor='#9883BF'
+        placeholderTextColor={theme.colors.secondary}
       />
       <Icon name="search" />
     </Container>
