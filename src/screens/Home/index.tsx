@@ -11,6 +11,7 @@ import {
   EmptyListContainer,
   EmptyListMessage
 } from './styles';
+import { Alert } from 'react-native';
 
 interface LoginDataProps {
   id: string;
@@ -22,11 +23,20 @@ interface LoginDataProps {
 type LoginListDataProps = LoginDataProps[];
 
 export function Home() {
-  // const [searchListData, setSearchListData] = useState<LoginListDataProps>([]);
-  // const [data, setData] = useState<LoginListDataProps>([]);
-
+  const [searchListData, setSearchListData] = useState<LoginListDataProps>([]);
+  const [data, setData] = useState<LoginListDataProps>([]);
+  const dataKey = '@passmanager:logins';
   async function loadData() {
     // Get asyncStorage data, use setSearchListData and setData
+
+    const response = await AsyncStorage.getItem(dataKey);
+    const newData = response ? JSON.parse(response) : [];
+
+    console.log(newData);
+
+    setData(newData);
+    setSearchListData(newData);
+
   }
   useEffect(() => {
     loadData();
@@ -34,10 +44,20 @@ export function Home() {
 
   useFocusEffect(useCallback(() => {
     loadData();
+    
   }, []));
 
   function handleFilterLoginData(search: string) {
     // Filter results inside data, save with setSearchListData
+
+    if (search) {
+      Alert.alert('Poxa 😢 algo deu errado', 'Informe titulo que deseja buscar');
+      return;
+    }
+
+    const dataFiltered = data.filter(login => login.title === search);
+    setSearchListData(dataFiltered);
+
   }
 
   return (
@@ -48,7 +68,7 @@ export function Home() {
       />
 
       <LoginList
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.id)}
         data={searchListData}
         ListEmptyComponent={(
           <EmptyListContainer>
